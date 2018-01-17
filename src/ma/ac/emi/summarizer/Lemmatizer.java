@@ -1,6 +1,7 @@
 package ma.ac.emi.summarizer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static ma.ac.emi.summarizer.Summarizer.lemmatizer;
@@ -11,12 +12,8 @@ public class Lemmatizer {
         String tags[] = posTagger.tag(tokens);
         String lemmas[] = lemmatizer.lemmatize(tokens, tags);
 
-        List<String> lemmasList = new ArrayList<>();
-        for (String s :
-                lemmas) {
-            if (!s.equals("O")) lemmasList.add(s);
-        }
-
+        List<String> lemmasList =  new ArrayList<>(Arrays.asList(lemmas));
+        lemmasList.remove("O");
         return lemmasList.toArray(new String[]{});
     }
 }

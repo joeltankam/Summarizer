@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static ma.ac.emi.summarizer.Lemmatizer.lemmatize;
 import static ma.ac.emi.summarizer.SentenceDetector.*;
@@ -152,12 +149,21 @@ public class Summarizer {
         String[] sent1 = lemmatize(tokenize(sentence1));
         String[] sent2 = lemmatize(tokenize(sentence2));
 
+        List<String> listSent1 = new ArrayList<>(Arrays.asList(sent1));
+        List<String> listSent2 = new ArrayList<>(Arrays.asList(sent2));
+
         if (sent1.length + sent2.length == 0)
             return 0;
 
-        List<String> intersectArray = (List<String>) intersect(new ArrayList<>(Arrays.asList(sent1)), new ArrayList<>(Arrays.asList(sent2)));
+        List<String> intersectArray = (List<String>) intersect(listSent1, listSent2);
 
-        float result = ((float) intersectArray.size() / ((float) sent1.length + ((float) sent2.length) / 2));
+        int fakeSize = 0;
+        for (String s :
+                intersectArray) {
+            fakeSize += Collections.frequency(listSent2,s);
+        }
+
+        float result = (float) fakeSize / ((float) sent1.length + ((float) sent2.length) / 2);
 
         return result;
     }
