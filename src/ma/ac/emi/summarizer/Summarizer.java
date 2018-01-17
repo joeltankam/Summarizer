@@ -1,6 +1,8 @@
 package ma.ac.emi.summarizer;
 
 import opennlp.tools.lemmatizer.DictionaryLemmatizer;
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.TokenizerME;
@@ -13,20 +15,102 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static ma.ac.emi.summarizer.Lemmatizer.lemmatize;
+import static ma.ac.emi.summarizer.SentenceDetector.*;
+import static ma.ac.emi.summarizer.Tokenizer.*;
 
 public class Summarizer {
-    public static TokenizerME tokenizer;
-    public static SentenceDetectorME sentenceDetect;
-    DictionaryLemmatizer lemmatizer;
-    public static Summarizer Instance;
-
-    public static String summarize(String title, String content) {
-        Instance = new Summarizer();
-        return content;
-    }
+    static TokenizerME tokenizer;
+    static SentenceDetectorME sentenceDetect;
+    static DictionaryLemmatizer lemmatizer;
+    static POSTaggerME posTagger;
+    static Summarizer Instance;
 
     public Summarizer() {
         initialize();
+    }
+
+    public static StringBuilder summarize(String title, String content){
+        return summarize(title, content, 1, true);
+    }
+
+    public static StringBuilder summarize(String title, String content, int sentencesNumber, Boolean byTitle) {
+        Instance = new Summarizer();
+
+        String[] paragraphs = splitToParagraphs(content);
+        StringBuilder summary = new StringBuilder();
+
+        for (String p : paragraphs) {
+            String bestSent = getBestsentenceFromParagraph(title, p);
+            if (bestSent != null && bestSent.length() > 0)
+                summary.append(bestSent);
+        }
+        return summary;
+    }
+
+    public static String getBestsentenceFromParagraph(String title, String paragraph) {
+        String[] sentences = splitToSentences(formatSentence(paragraph));
+        if (sentences == null || sentences.length <= 2)
+            return "";
+
+        float[] sentenceScores = getSentenceIntersections(title, sentences);
+
+        return getBestSentence(sentences, sentenceScores);
+    }
+
+    public static float[] getSentenceIntersections(String title, String[] sentences) {
+        int n = sentences.length;
+
+        float[] intersections = new float[n];
+
+        for (int i = 0; i < n; i++) {
+            intersections[i] = sentenceIntersection(title, sentences[i]);
+        }
+        return intersections;
+    }
+
+    public static String getBestSentence(String[] sentences, float[] scores) {
+        return sentences[getMaxIndex(scores)];
+    }
+
+    public static int getMaxIndex(float[] array) {
+        int maxIndex = 0;
+        float max = -1;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] > max) {
+                max = array[i];
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    public static float sentenceIntersection(String sentence1, String sentence2) {
+        String[] sent1 = lemmatize(tokenize(sentence1));
+        String[] sent2 = lemmatize(tokenize(sentence2));
+
+        if (sent1.length + sent2.length == 0)
+            return 0;
+
+        List<String> intersectArray = (List<String>) intersect(new ArrayList<>(Arrays.asList(sent1)), new ArrayList<>(Arrays.asList(sent2)));
+
+        float result = ((float) intersectArray.size() / ((float) sent1.length + ((float) sent2.length) / 2));
+
+        return result;
+    }
+
+    public static <T> Collection<T> intersect(Collection<? extends T> a, Collection<? extends T> b) {
+        Collection<T> result = new ArrayList<T>();
+        for (T t : a) {
+            if (b.remove(t)) result.add(t);
+        }
+
+        return result;
     }
 
     public void initialize() {
@@ -63,6 +147,21 @@ public class Summarizer {
             e.printStackTrace();
         }
 
+        InputStream posModelIn = null;
+        try {
+            posModelIn = new FileInputStream("data/en-pos-maxent.bin");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        POSModel posModel = null;
+        try {
+            posModel = new POSModel(posModelIn);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        posTagger = new POSTaggerME(posModel);
         InputStream dictLemmatizer = null;
         try {
             dictLemmatizer = new FileInputStream("data/en-lemmatizer.dict");
