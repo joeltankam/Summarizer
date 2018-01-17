@@ -65,7 +65,6 @@ public class Summarizer {
         return summary;
     }
 
-
     public static float[] getSentenceScores(String[] sentences, float[][] scores) {
         float[] scoresReturn = new float[sentences.length];
 
@@ -245,10 +244,10 @@ public class Summarizer {
         String content;
         try {
             content = readAll(args[0]);
-            if(args.length>1){
+            if (args.length > 1) {
                 String title = args[1];
                 System.out.println(summarize(title, content));
-            }else{
+            } else {
                 System.out.println(summarize(content));
             }
         } catch (IOException e) {
