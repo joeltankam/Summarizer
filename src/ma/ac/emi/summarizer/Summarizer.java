@@ -22,7 +22,7 @@ import java.util.List;
 
 import static ma.ac.emi.summarizer.Lemmatizer.lemmatize;
 import static ma.ac.emi.summarizer.SentenceDetector.*;
-import static ma.ac.emi.summarizer.Tokenizer.*;
+import static ma.ac.emi.summarizer.Tokenizer.tokenize;
 
 public class Summarizer {
     static TokenizerME tokenizer;
@@ -35,22 +35,49 @@ public class Summarizer {
         initialize();
     }
 
-    public static StringBuilder summarize(String title, String content){
+    public static StringBuilder summarize(String content) {
+        return summarize("", content, 1, false);
+    }
+
+    public static StringBuilder summarize(String content, int sentencesNumber) {
+        return summarize("", content, sentencesNumber, false);
+    }
+
+    public static StringBuilder summarize(String title, String content) {
         return summarize(title, content, 1, true);
     }
 
-    public static StringBuilder summarize(String title, String content, int sentencesNumber, Boolean byTitle) {
+    private static StringBuilder summarize(String title, String content, int sentencesNumber, Boolean byTitle) {
         Instance = new Summarizer();
 
         String[] paragraphs = splitToParagraphs(content);
         StringBuilder summary = new StringBuilder();
 
         for (String p : paragraphs) {
-            String bestSent = getBestsentenceFromParagraph(title, p);
+            String bestSent;
+            if (byTitle)
+                bestSent = getBestsentenceFromParagraph(title, p);
+            else
+                bestSent = getBestsentenceFromParagraph(p);
             if (bestSent != null && bestSent.length() > 0)
                 summary.append(bestSent);
         }
         return summary;
+    }
+
+
+    public static float[] getSentenceScores(String[] sentences, float[][] scores) {
+        float[] scoresReturn = new float[sentences.length];
+
+        for (int i = 0; i < sentences.length; i++) {
+            int sentenceScore = 0;
+            for (int j = 0; j < scores[i].length; j++) {
+                sentenceScore += scores[i][j];
+            }
+            scoresReturn[i] = sentenceScore;
+        }
+
+        return scoresReturn;
     }
 
     public static String getBestsentenceFromParagraph(String title, String paragraph) {
@@ -58,12 +85,44 @@ public class Summarizer {
         if (sentences == null || sentences.length <= 2)
             return "";
 
-        float[] sentenceScores = getSentenceIntersections(title, sentences);
+        float[] sentenceScores = getSentenceIntersectionArray(title, sentences);
 
         return getBestSentence(sentences, sentenceScores);
     }
 
-    public static float[] getSentenceIntersections(String title, String[] sentences) {
+    public static String getBestsentenceFromParagraph(String paragraph) {
+        String[] sentences = splitToSentences(formatSentence(paragraph));
+        if (sentences == null || sentences.length <= 2)
+            return "";
+
+        float[][] intersectionMatrix = getSentenceIntersectionMatrix(sentences);
+
+        float[] sentenceScores = getSentenceScores(sentences, intersectionMatrix);
+
+        return getBestSentence(sentences, sentenceScores);
+    }
+
+    public static float[][] getSentenceIntersectionMatrix(String[] sentences) {
+        int n = sentences.length;
+
+        float[][] intersectionMatrix = new float[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                try {
+                    if (i == j)
+                        continue;
+
+                    intersectionMatrix[i][j] = sentenceIntersection(sentences[i], sentences[j]);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        return intersectionMatrix;
+    }
+
+    public static float[] getSentenceIntersectionArray(String title, String[] sentences) {
         int n = sentences.length;
 
         float[] intersections = new float[n];
@@ -176,16 +235,22 @@ public class Summarizer {
     }
 
     public static void main(String args[]) {
-        if (args.length < 2) {
-            System.out.println("java Summarizer [title] [content-path]");
+        if (args.length < 1) {
+            System.out.println("java Summarizer [content-path]");
+            System.out.println("java Summarizer [content-path] [title]");
             System.exit(0);
         }
 
-        String title = args[0];
+
         String content;
         try {
-            content = readAll(args[1]);
-            System.out.println(summarize(title, content));
+            content = readAll(args[0]);
+            if(args.length>1){
+                String title = args[1];
+                System.out.println(summarize(title, content));
+            }else{
+                System.out.println(summarize(content));
+            }
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
