@@ -12,8 +12,10 @@ public class Lemmatizer {
         String tags[] = posTagger.tag(tokens);
         String lemmas[] = lemmatizer.lemmatize(tokens, tags);
 
-        List<String> lemmasList =  new ArrayList<>(Arrays.asList(lemmas));
-        lemmasList.remove("O");
-        return lemmasList.toArray(new String[]{});
+        for(int i=0; i<lemmas.length; i++){
+            if(lemmas[i].equals("O"))
+                lemmas[i] = tokens[i];
+        }
+        return lemmas;
     }
 }

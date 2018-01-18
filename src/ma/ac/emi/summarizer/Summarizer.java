@@ -62,20 +62,6 @@ public class Summarizer {
         return summary;
     }
 
-    static float[] getSentenceScores(String[] sentences, float[][] scores) {
-        float[] scoresReturn = new float[sentences.length];
-
-        for (int i = 0; i < sentences.length; i++) {
-            int sentenceScore = 0;
-            for (int j = 0; j < scores[i].length; j++) {
-                sentenceScore += scores[i][j];
-            }
-            scoresReturn[i] = sentenceScore;
-        }
-
-        return scoresReturn;
-    }
-
     static String getBestSentenceFromParagraph(String title, String paragraph) {
         String[] sentences = splitToSentences(formatSentence(paragraph));
         if (sentences == null || sentences.length <= 2)
@@ -129,6 +115,20 @@ public class Summarizer {
         return intersections;
     }
 
+    static float[] getSentenceScores(String[] sentences, float[][] scores) {
+        float[] scoresReturn = new float[sentences.length];
+
+        for (int i = 0; i < sentences.length; i++) {
+            int sentenceScore = 0;
+            for (int j = 0; j < scores[i].length; j++) {
+                sentenceScore += scores[i][j];
+            }
+            scoresReturn[i] = sentenceScore;
+        }
+
+        return scoresReturn;
+    }
+
     static String getBestSentence(String[] sentences, float[] scores) {
         return sentences[getMaxIndex(scores)];
     }
@@ -149,13 +149,12 @@ public class Summarizer {
         String[] sent1 = lemmatize(tokenize(sentence1));
         String[] sent2 = lemmatize(tokenize(sentence2));
 
-        List<String> listSent1 = new ArrayList<>(Arrays.asList(sent1));
         List<String> listSent2 = new ArrayList<>(Arrays.asList(sent2));
 
         if (sent1.length + sent2.length == 0)
             return 0;
 
-        List<String> intersectArray = (List<String>) intersect(listSent1, listSent2);
+        String[] intersectArray = intersection(sent1, sent2);
 
         int fakeSize = 0;
         for (String s :
@@ -163,9 +162,23 @@ public class Summarizer {
             fakeSize += Collections.frequency(listSent2,s);
         }
 
-        float result = (float) fakeSize / ((float) sent1.length + ((float) sent2.length) / 2);
+        float result = (float) fakeSize / (((float) sent1.length + (float) sent2.length) / 2);
 
         return result;
+    }
+
+    public static String[] intersection(String[] sent1, String[] sent2) {
+        if (sent1 == null || sent1.length == 0 || sent2 == null || sent2.length == 0)
+            return new String[0];
+
+        List<String> sent1List = new ArrayList<String>(Arrays.asList(sent1));
+        List<String> sent2List = new ArrayList<String>(Arrays.asList(sent2));
+
+        sent1List.retainAll(sent2List);
+
+        String[] intersect = sent1List.toArray(new String[0]);
+
+        return intersect;
     }
 
     static <T> Collection<T> intersect(Collection<? extends T> a, Collection<? extends T> b) {

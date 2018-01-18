@@ -181,14 +181,17 @@ public class Tokenizer {
             "your",
             "yours",
             "yourself",
-            "yourselves"};
+            "yourselves",
+            ".",
+            ",",
+            ";"};
 
     static String[] tokenize(String sentence) {
-        String tokens [] = tokenizer.tokenize(sentence);
+        String tokens[] = tokenizer.tokenize(sentence);
         return removeStopWords(tokens);
     }
 
-    public static String[] removeStopWords(String sentence[]){
+    public static String[] removeStopWords(String sentence[]) {
         List<String> list = new ArrayList<>(Arrays.asList(sentence));
         list.removeAll(Arrays.asList(stopWords));
         return list.toArray(new String[]{});
