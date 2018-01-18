@@ -5,18 +5,14 @@
  */
 package ma.ac.emi.ui;
 
-import ma.ac.emi.summarizer.Summarizer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import javax.swing.*;
 import static ma.ac.emi.summarizer.Summarizer.summarize;
-
 
 public class SummarizerTest extends javax.swing.JFrame {
 
@@ -40,16 +36,16 @@ public class SummarizerTest extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        toResume = new javax.swing.JTextArea();
+        contentTextArea = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
-        textField = new javax.swing.JTextField();
+        titleTextField = new javax.swing.JTextField();
         label1 = new java.awt.Label();
-        resumeButton = new javax.swing.JButton();
-        useTitle = new javax.swing.JCheckBox();
+        summarizeButton = new javax.swing.JButton();
+        useTitleCheckBox = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
         rightPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        resumedText = new javax.swing.JTextPane();
+        summaryTextPane = new javax.swing.JTextPane();
         jLabel1 = new javax.swing.JLabel();
 
         fileChooser.addActionListener(new java.awt.event.ActionListener() {
@@ -63,9 +59,12 @@ public class SummarizerTest extends javax.swing.JFrame {
 
         jPanel1.setLayout(new java.awt.GridLayout(1, 2));
 
-        toResume.setColumns(20);
-        toResume.setRows(5);
-        jScrollPane1.setViewportView(toResume);
+        contentTextArea.setColumns(20);
+        contentTextArea.setFont(contentTextArea.getFont());
+        contentTextArea.setLineWrap(true);
+        contentTextArea.setRows(5);
+        contentTextArea.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(contentTextArea);
 
         jButton1.setText("Get text from file");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -74,19 +73,17 @@ public class SummarizerTest extends javax.swing.JFrame {
             }
         });
 
-        textField.setText("Type your title here");
-
         label1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         label1.setText("Content");
 
-        resumeButton.setText("Summarize");
-        resumeButton.addActionListener(new java.awt.event.ActionListener() {
+        summarizeButton.setText("Summarize");
+        summarizeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resumeButtonActionPerformed(evt);
+                summarizeButtonActionPerformed(evt);
             }
         });
 
-        useTitle.setText("Use title");
+        useTitleCheckBox.setText("Use title");
 
         jLabel2.setText("Title");
 
@@ -101,17 +98,17 @@ public class SummarizerTest extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(resumeButton))
+                        .addComponent(summarizeButton))
                     .addGroup(leftPanelLayout.createSequentialGroup()
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(leftPanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(textField))
+                        .addComponent(titleTextField))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(useTitle)
+                        .addComponent(useTitleCheckBox)
                         .addGap(8, 8, 8)))
                 .addContainerGap())
         );
@@ -122,22 +119,24 @@ public class SummarizerTest extends javax.swing.JFrame {
                 .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(textField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(useTitle)
+                .addComponent(useTitleCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(resumeButton)
+                    .addComponent(summarizeButton)
                     .addComponent(jButton1))
                 .addContainerGap())
         );
 
         jPanel1.add(leftPanel);
 
-        jScrollPane3.setViewportView(resumedText);
+        summaryTextPane.setEditable(false);
+        summaryTextPane.setFont(summaryTextPane.getFont().deriveFont(summaryTextPane.getFont().getSize()+3f));
+        jScrollPane3.setViewportView(summaryTextPane);
 
         jLabel1.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
         jLabel1.setText("Summary");
@@ -160,9 +159,9 @@ public class SummarizerTest extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(68, 68, 68)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         jPanel1.add(rightPanel);
@@ -181,15 +180,17 @@ public class SummarizerTest extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void resumeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeButtonActionPerformed
-        String resumed="";
-        if(!this.useTitle.isSelected()){
-            resumed = summarize(this.toResume.getText()).toString();
-        }else{
-            resumed = summarize( this.textField.getText(), this.toResume.getText()).toString();
+    private void summarizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summarizeButtonActionPerformed
+        summarizeButton.setEnabled(false);
+        String resumed = "";
+        if (!this.useTitleCheckBox.isSelected()) {
+            resumed = summarize(this.contentTextArea.getText()).toString();
+        } else {
+            resumed = summarize(this.titleTextField.getText(), this.contentTextArea.getText()).toString();
         }
-        this.resumedText.setText(resumed);
-    }//GEN-LAST:event_resumeButtonActionPerformed
+        this.summaryTextPane.setText(resumed);
+        summarizeButton.setEnabled(true);
+    }//GEN-LAST:event_summarizeButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.fileChooser.showOpenDialog(jPanel1);
@@ -197,13 +198,13 @@ public class SummarizerTest extends javax.swing.JFrame {
 
     private void fileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileChooserActionPerformed
         File file = fileChooser.getSelectedFile();
-        System.out.println("Opening: " + file.getName() + ".");
+        //System.out.println("Opening: " + file.getName() + ".");
         try {
-            this.toResume.setText(
-                    new String ( Files.readAllBytes( Paths.get(file.getPath()) ) )
+            this.contentTextArea.setText(
+                    new String(Files.readAllBytes(Paths.get(file.getPath())))
             );
         } catch (IOException ex) {
-        Logger.getLogger(SummarizerTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SummarizerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_fileChooserActionPerformed
 
@@ -217,12 +218,8 @@ public class SummarizerTest extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(SummarizerTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -244,6 +241,7 @@ public class SummarizerTest extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea contentTextArea;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -253,11 +251,10 @@ public class SummarizerTest extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private java.awt.Label label1;
     private javax.swing.JPanel leftPanel;
-    private javax.swing.JButton resumeButton;
-    private javax.swing.JTextPane resumedText;
     private javax.swing.JPanel rightPanel;
-    private javax.swing.JTextField textField;
-    private javax.swing.JTextArea toResume;
-    private javax.swing.JCheckBox useTitle;
+    private javax.swing.JButton summarizeButton;
+    private javax.swing.JTextPane summaryTextPane;
+    private javax.swing.JTextField titleTextField;
+    private javax.swing.JCheckBox useTitleCheckBox;
     // End of variables declaration//GEN-END:variables
 }

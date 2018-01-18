@@ -28,7 +28,6 @@ public class Summarizer {
     static SentenceDetectorME sentenceDetect;
     static DictionaryLemmatizer lemmatizer;
     static POSTaggerME posTagger;
-    static Summarizer Instance;
 
     public Summarizer() {
         initialize();
@@ -47,7 +46,7 @@ public class Summarizer {
     }
 
     private static StringBuilder summarize(String title, String content, int sentencesNumber, Boolean byTitle) {
-        Instance = new Summarizer();
+        new Summarizer();
 
         String[] paragraphs = splitToParagraphs(content);
         StringBuilder summary = new StringBuilder();
@@ -64,7 +63,7 @@ public class Summarizer {
         return summary;
     }
 
-    static String getBestSentenceFromParagraph(String title, String paragraph) {
+    private static String getBestSentenceFromParagraph(String title, String paragraph) {
         String[] sentences = splitToSentences(formatSentence(paragraph));
         if (sentences == null || sentences.length <= 2)
             return "";
@@ -74,7 +73,7 @@ public class Summarizer {
         return getBestSentence(sentences, sentenceScores);
     }
 
-    static String getBestSentenceFromParagraph(String paragraph) {
+    private static String getBestSentenceFromParagraph(String paragraph) {
         String[] sentences = splitToSentences(formatSentence(paragraph));
         if (sentences == null || sentences.length <= 2)
             return "";
@@ -86,7 +85,7 @@ public class Summarizer {
         return getBestSentence(sentences, sentenceScores);
     }
 
-    static float[][] getSentenceIntersectionMatrix(String[] sentences) {
+    private static float[][] getSentenceIntersectionMatrix(String[] sentences) {
         int n = sentences.length;
 
         float[][] intersectionMatrix = new float[n][n];
@@ -106,7 +105,7 @@ public class Summarizer {
         return intersectionMatrix;
     }
 
-    static float[] getSentenceIntersectionArray(String title, String[] sentences) {
+    private static float[] getSentenceIntersectionArray(String title, String[] sentences) {
         int n = sentences.length;
 
         float[] intersections = new float[n];
@@ -117,7 +116,7 @@ public class Summarizer {
         return intersections;
     }
 
-    static float[] getSentenceScores(String[] sentences, float[][] scores) {
+    private static float[] getSentenceScores(String[] sentences, float[][] scores) {
         float[] scoresReturn = new float[sentences.length];
 
         for (int i = 0; i < sentences.length; i++) {
@@ -131,11 +130,11 @@ public class Summarizer {
         return scoresReturn;
     }
 
-    static String getBestSentence(String[] sentences, float[] scores) {
+    private static String getBestSentence(String[] sentences, float[] scores) {
         return sentences[getMaxIndex(scores)];
     }
 
-    static int getMaxIndex(float[] array) {
+    private static int getMaxIndex(float[] array) {
         int maxIndex = 0;
         float max = -1;
         for (int i = 0; i < array.length; i++) {
@@ -147,16 +146,16 @@ public class Summarizer {
         return maxIndex;
     }
 
-    static float sentenceIntersection(String sentence1, String sentence2) {
-        String[] sent1 = lemmatize(tokenize(sentence1));
-        String[] sent2 = lemmatize(tokenize(sentence2));
+    private static float sentenceIntersection(String sentence1, String sentence2) {
+        String[] sent1 = lemmatize(tokenize(sentence1)); // step 1 and 2
+        String[] sent2 = lemmatize(tokenize(sentence2)); // step 1 and 2
 
         List<String> listSent2 = new ArrayList<>(Arrays.asList(sent2));
 
         if (sent1.length + sent2.length == 0)
             return 0;
 
-        String[] intersectArray = intersection(sent1, sent2);
+        String[] intersectArray = intersection(sent1, sent2); // step 3
 
         int fakeSize = 0;
         for (String s :
@@ -164,12 +163,11 @@ public class Summarizer {
             fakeSize += Collections.frequency(listSent2, s);
         }
 
-        float result = (float) fakeSize / (((float) sent1.length + (float) sent2.length) / 2);
-
-        return result;
+        // step 4
+        return (float) fakeSize / (((float) sent1.length + (float) sent2.length) / 2);
     }
 
-    public static String[] intersection(String[] sent1, String[] sent2) {
+    private static String[] intersection(String[] sent1, String[] sent2) {
         if (sent1 == null || sent1.length == 0 || sent2 == null || sent2.length == 0)
             return new String[0];
 
@@ -181,7 +179,7 @@ public class Summarizer {
         return sent1List.toArray(new String[0]);
     }
 
-    void initialize() {
+    private void initialize() {
         InputStream sentenceModelIS = null;
         try {
             sentenceModelIS = new FileInputStream("data/en-sent.bin");

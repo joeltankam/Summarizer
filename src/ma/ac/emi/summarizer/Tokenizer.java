@@ -6,8 +6,8 @@ import java.util.List;
 
 import static ma.ac.emi.summarizer.Summarizer.tokenizer;
 
-public class Tokenizer {
-    static String stopWords[] = {
+class Tokenizer {
+    private static String stopWords[] = {
             "a",
             "about",
             "above",
