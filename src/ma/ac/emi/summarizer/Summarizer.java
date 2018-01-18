@@ -53,16 +53,16 @@ public class Summarizer {
         for (String p : paragraphs) {
             String bestSent;
             if (byTitle)
-                bestSent = getBestsentenceFromParagraph(title, p);
+                bestSent = getBestSentenceFromParagraph(title, p);
             else
-                bestSent = getBestsentenceFromParagraph(p);
+                bestSent = getBestSentenceFromParagraph(p);
             if (bestSent != null && bestSent.length() > 0)
                 summary.append(bestSent);
         }
         return summary;
     }
 
-    public static float[] getSentenceScores(String[] sentences, float[][] scores) {
+    static float[] getSentenceScores(String[] sentences, float[][] scores) {
         float[] scoresReturn = new float[sentences.length];
 
         for (int i = 0; i < sentences.length; i++) {
@@ -76,7 +76,7 @@ public class Summarizer {
         return scoresReturn;
     }
 
-    public static String getBestsentenceFromParagraph(String title, String paragraph) {
+    static String getBestSentenceFromParagraph(String title, String paragraph) {
         String[] sentences = splitToSentences(formatSentence(paragraph));
         if (sentences == null || sentences.length <= 2)
             return "";
@@ -86,7 +86,7 @@ public class Summarizer {
         return getBestSentence(sentences, sentenceScores);
     }
 
-    public static String getBestsentenceFromParagraph(String paragraph) {
+    static String getBestSentenceFromParagraph(String paragraph) {
         String[] sentences = splitToSentences(formatSentence(paragraph));
         if (sentences == null || sentences.length <= 2)
             return "";
@@ -98,7 +98,7 @@ public class Summarizer {
         return getBestSentence(sentences, sentenceScores);
     }
 
-    public static float[][] getSentenceIntersectionMatrix(String[] sentences) {
+    static float[][] getSentenceIntersectionMatrix(String[] sentences) {
         int n = sentences.length;
 
         float[][] intersectionMatrix = new float[n][n];
@@ -118,7 +118,7 @@ public class Summarizer {
         return intersectionMatrix;
     }
 
-    public static float[] getSentenceIntersectionArray(String title, String[] sentences) {
+    static float[] getSentenceIntersectionArray(String title, String[] sentences) {
         int n = sentences.length;
 
         float[] intersections = new float[n];
@@ -129,11 +129,11 @@ public class Summarizer {
         return intersections;
     }
 
-    public static String getBestSentence(String[] sentences, float[] scores) {
+    static String getBestSentence(String[] sentences, float[] scores) {
         return sentences[getMaxIndex(scores)];
     }
 
-    public static int getMaxIndex(float[] array) {
+    static int getMaxIndex(float[] array) {
         int maxIndex = 0;
         float max = -1;
         for (int i = 0; i < array.length; i++) {
@@ -145,7 +145,7 @@ public class Summarizer {
         return maxIndex;
     }
 
-    public static float sentenceIntersection(String sentence1, String sentence2) {
+    static float sentenceIntersection(String sentence1, String sentence2) {
         String[] sent1 = lemmatize(tokenize(sentence1));
         String[] sent2 = lemmatize(tokenize(sentence2));
 
@@ -168,7 +168,7 @@ public class Summarizer {
         return result;
     }
 
-    public static <T> Collection<T> intersect(Collection<? extends T> a, Collection<? extends T> b) {
+    static <T> Collection<T> intersect(Collection<? extends T> a, Collection<? extends T> b) {
         Collection<T> result = new ArrayList<T>();
         for (T t : a) {
             if (b.remove(t)) result.add(t);
@@ -177,7 +177,7 @@ public class Summarizer {
         return result;
     }
 
-    public void initialize() {
+    void initialize() {
         InputStream sentenceModelIS = null;
         try {
             sentenceModelIS = new FileInputStream("data/en-sent.bin");
