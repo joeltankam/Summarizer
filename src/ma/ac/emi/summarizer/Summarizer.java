@@ -176,18 +176,7 @@ public class Summarizer {
 
         sent1List.retainAll(sent2List);
 
-        String[] intersect = sent1List.toArray(new String[0]);
-
-        return intersect;
-    }
-
-    static <T> Collection<T> intersect(Collection<? extends T> a, Collection<? extends T> b) {
-        Collection<T> result = new ArrayList<T>();
-        for (T t : a) {
-            if (b.remove(t)) result.add(t);
-        }
-
-        return result;
+        return sent1List.toArray(new String[0]);
     }
 
     void initialize() {
