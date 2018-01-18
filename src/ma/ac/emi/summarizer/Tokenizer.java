@@ -184,7 +184,11 @@ public class Tokenizer {
             "yourselves",
             ".",
             ",",
-            ";"};
+            ";",
+            ":",
+            "!",
+            "?"
+    };
 
     static String[] tokenize(String sentence) {
         String tokens[] = tokenizer.tokenize(sentence);

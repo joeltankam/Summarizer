@@ -7,12 +7,11 @@
 ``` bash
 java Summarizer text-sample.txt
 
-    A baby sucks on a pencil and her panicky mother fears the child will get lead poisoning. These are just a few examples of scientific illiteracy ' inane misconceptions that could have been avoided with a smidgen of freshman science. The costs of an ignorance of science are not just practical ones like misbegotten policies, forgone cures and a unilateral disarmament in national competitiveness.
+    Don't let the name fool you: a black hole is anything but empty space.Although the term was not coined until 1967 by Princeton physicist John Wheeler, the idea of an object in space so massive and dense that light could not escape it has been around for centuries.Scientists can't directly observe black holes with telescopes that detect x-rays, light, or other forms of electromagnetic radiation.Most black holes form from the remnants of a large star that dies in a supernova explosion.Even bigger black holes can result from stellar collisions.
+    
+java Summarizer text-sample.txt "black holes"
 
-java Summarizer text-sample.txt "this is the title"
-
-    A baby sucks on a pencil and her panicky mother fears the child will get lead poisoning. These are just a few examples of scientific illiteracy ' inane misconceptions that could have been avoided with a smidgen of freshman science. The costs of an ignorance of science are not just practical ones like misbegotten policies, forgone cures and a unilateral disarmament in national competitiveness.
-```
+    Don't let the name fool you: a black hole is anything but empty space.If the core's mass is more than about three times the mass of the Sun, the equations showed, the force of gravity overwhelms all other forces and produces a black hole.In this case, the black hole can tear the star apart as it pulls it toward itself.Most black holes form from the remnants of a large star that dies in a supernova explosion.Even bigger black holes can result from stellar collisions.```
 
 ## Dependencies
 

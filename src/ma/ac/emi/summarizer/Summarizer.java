@@ -7,7 +7,6 @@ import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
-import opennlp.tools.util.InvalidFormatException;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,7 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static ma.ac.emi.summarizer.Lemmatizer.lemmatize;
 import static ma.ac.emi.summarizer.SentenceDetector.*;
@@ -159,7 +161,7 @@ public class Summarizer {
         int fakeSize = 0;
         for (String s :
                 intersectArray) {
-            fakeSize += Collections.frequency(listSent2,s);
+            fakeSize += Collections.frequency(listSent2, s);
         }
 
         float result = (float) fakeSize / (((float) sent1.length + (float) sent2.length) / 2);
