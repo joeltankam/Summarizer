@@ -183,16 +183,16 @@ public class Summarizer {
             sentenceModelIS = new FileInputStream("data/en-sent.bin");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            System.exit(0);
         }
 
         SentenceModel model;
         try {
             model = new SentenceModel(sentenceModelIS);
             sentenceDetect = new SentenceDetectorME(model);
-        } catch (InvalidFormatException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(0);
         }
 
         InputStream tokenizerModelIS = null;
@@ -205,10 +205,9 @@ public class Summarizer {
         try {
             tokenModel = new TokenizerModel(tokenizerModelIS);
             tokenizer = new TokenizerME(tokenModel);
-        } catch (InvalidFormatException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(0);
         }
 
         InputStream posModelIn = null;
@@ -216,6 +215,7 @@ public class Summarizer {
             posModelIn = new FileInputStream("data/en-pos-maxent.bin");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            System.exit(0);
         }
 
         POSModel posModel = null;
@@ -223,6 +223,7 @@ public class Summarizer {
             posModel = new POSModel(posModelIn);
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(0);
         }
 
         posTagger = new POSTaggerME(posModel);
@@ -231,11 +232,13 @@ public class Summarizer {
             dictLemmatizer = new FileInputStream("data/en-lemmatizer.dict");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            System.exit(0);
         }
         try {
             lemmatizer = new DictionaryLemmatizer(dictLemmatizer);
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(0);
         }
     }
 
