@@ -18,7 +18,7 @@ java Summarizer text-sample.txt
 
 ``` 
 
-![Sample without title]( docs/sample_without_title.png "Sample without title")
+![Sample without title]( ./doc/img/sample_without_title.png "Sample without title")
 
 ### Using title
 
@@ -28,7 +28,7 @@ java Summarizer text-sample.txt "black holes"
     Don't let the name fool you: a black hole is anything but empty space.If the core's mass is more than about three times the mass of the Sun, the equations showed, the force of gravity overwhelms all other forces and produces a black hole.In this case, the black hole can tear the star apart as it pulls it toward itself.Most black holes form from the remnants of a large star that dies in a supernova explosion.Even bigger black holes can result from stellar collisions.```
 ```
 
-![Sample using title]( docs/sample_with_title.png "Sample using title")
+![Sample using title]( ./doc/img/sample_with_title.png "Sample using title")
 
 ## Dependencies
 
