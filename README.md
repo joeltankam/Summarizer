@@ -2,13 +2,13 @@
 
 > A simple text summarization in java
 
-The resume consist of relevant sentences from each paragraphs. 
-After several process, such as stop words removal, stemming or lemmatization, 
+The summary consists of relevant sentences from each paragraph. 
+After several processes, such as stop word removal, stemming or lemmatization, 
 sentences are compared to each other or to the title to determine the most relevant ones.
 
 ## Examples
 
-Using [nasa article](https://www.nasa.gov/audience/forstudents/k-4/stories/nasa-knows/what-is-a-black-hole-k4.html) about black holes.
+Using [NASA article](https://www.nasa.gov/audience/forstudents/k-4/stories/nasa-knows/what-is-a-black-hole-k4.html) about black holes.
 
 ### Without title
 ``` bash
@@ -32,4 +32,4 @@ java Summarizer text-sample.txt "black holes"
 
 ## Dependencies
 
-The project depend on [OpenNLP](http://opennlp.apache.org/)
+The project depends on [OpenNLP](http://opennlp.apache.org/)
